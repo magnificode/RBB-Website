@@ -8,7 +8,7 @@ module.exports = {
   siteMetadata: {
     title: `Rebuild Black Business`,
     // eslint-disable-next-line max-len
-    description: ``,
+    description: `Restore wealth to Black communities through economic empowerment and resource allocation.`,
     author: {
       name: 'Rebuild Black Business',
     },
@@ -17,6 +17,12 @@ module.exports = {
       url: BASE_SITE_URL,
       logo:
         'https://res.cloudinary.com/rebuild-black-business/image/upload/v1591562585/assets/RBBLogoFinal_ugdskx.png',
+    },
+    seo: {
+      title: `Rebuild Black Business`,
+      description: `Restore wealth to Black communities through economic empowerment and resource allocation.`,
+      image:
+        'https://res.cloudinary.com/rebuild-black-business/image/upload/v1591726474/assets/rbb-socialimage_g7rhcj.jpg',
     },
     social: {
       twitter: 'rebuildingblack',
@@ -31,7 +37,7 @@ module.exports = {
       src: '#',
       alt: 'Rebuild Black Business',
     },
-    image: `${BASE_SITE_URL}/icons/icon-512x512.png`, // used for RSS feed image and SEO fallback
+    image: `https://res.cloudinary.com/rebuild-black-business/image/upload/v1591726474/assets/rbb-socialimage_g7rhcj.jpg`, // used for RSS feed image and SEO fallback
     logoText: 'Rebuild Black Business',
     siteUrl: BASE_SITE_URL,
     menuLinks: [
@@ -152,6 +158,10 @@ module.exports = {
             queryName: `Allies`,
             separateNodeType: true,
             separateMapType: true,
+            defaultValues: {
+              First_Name: '',
+              Last_Name: '',
+            },
           },
         ],
       },

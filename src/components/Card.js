@@ -4,12 +4,12 @@ import {
   AspectRatioBox,
   Box,
   Flex,
-  Image,
   Heading,
   Text,
   Stack,
 } from '@chakra-ui/core';
-import { Button } from './Button';
+
+import { Button, Image } from '.';
 
 const CardWrapper = forwardRef(({ children, ...props }, ref) => {
   return (
@@ -81,7 +81,6 @@ const CardButtonGroup = forwardRef(({ children, ...props }, ref) => {
       spacing={3}
       // as={props => <Sta {...props} spacing={4} />}
       alignItems="center"
-      mt={3}
       width="100%"
       {...props}
       ref={ref}
@@ -108,8 +107,8 @@ const Card = forwardRef(({ children, ...props }, ref) => {
 });
 
 CardImage.propTypes = {
-  alt: PropTypes.string.isRequired,
-  src: PropTypes.string.isRequired,
+  alt: PropTypes.string,
+  src: PropTypes.string,
 };
 
 CardWrapper.displayName = 'CardWrapper';

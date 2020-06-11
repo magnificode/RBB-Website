@@ -1,6 +1,7 @@
 import React from 'react';
 import { PseudoBox, Box, IconButton } from '@chakra-ui/core';
 import PropTypes from 'prop-types';
+import { Link } from 'gatsby';
 
 /**
  * @function PaginationArrow
@@ -11,7 +12,7 @@ import PropTypes from 'prop-types';
  *
  */
 
-const PaginationArrow = ({ onClick, hidden, direction }) => {
+const PaginationArrow = ({ hidden, direction, linkTo }) => {
   return hidden ? (
     <Box width={10} height={10} />
   ) : (
@@ -32,25 +33,28 @@ const PaginationArrow = ({ onClick, hidden, direction }) => {
         color: 'rbb-white',
       }}
     >
-      <IconButton
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        onClick={onClick}
-        aria-label={`Go to ${direction === 'NEXT' ? 'next' : 'previous'} page`}
-        variant="unstyled"
-        icon={direction === 'NEXT' ? 'arrowRight' : 'arrowLeft'}
-        fontSize="28px"
-        minWidth={0}
-      />
+      <Link to={linkTo}>
+        <IconButton
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          aria-label={`Go to ${
+            direction === 'NEXT' ? 'next' : 'previous'
+          } page`}
+          variant="unstyled"
+          icon={direction === 'NEXT' ? 'arrowRight' : 'arrowLeft'}
+          fontSize="28px"
+          minWidth={0}
+        />
+      </Link>
     </PseudoBox>
   );
 };
 
 PaginationArrow.propTypes = {
-  onClick: PropTypes.func.isRequired,
   isDisabled: PropTypes.bool.isRequired,
   direction: PropTypes.oneOf(['PREVIOUS', 'NEXT']).isRequired,
+  linkTo: PropTypes.string.isRequired,
 };
 
 export default PaginationArrow;

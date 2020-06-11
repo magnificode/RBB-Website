@@ -1,6 +1,5 @@
 import React from 'react';
 import { Flex, Text, useTheme } from '@chakra-ui/core';
-import Link from './../Link';
 
 const DynamicYear = new Date().getFullYear();
 
@@ -10,8 +9,8 @@ const Copyright = () => {
     <Flex w="full" justify="center" align="center">
       <Flex
         w={['80%', '80%', '80%', 'full']}
+        justify="center"
         textAlign="center"
-        direction={['column', 'column', 'column', 'row']}
       >
         <Text
           fontSize="12px"
@@ -22,14 +21,6 @@ const Copyright = () => {
           Copyright &copy; {DynamicYear} Rebuild Black Businesses. All rights
           reserved.
         </Text>
-        <Link
-          variant="footer"
-          to="/terms-and-conditions"
-          fontSize="12px"
-          ml="1"
-        >
-          Terms and Conditions
-        </Link>
       </Flex>
     </Flex>
   );

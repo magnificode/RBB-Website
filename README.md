@@ -109,6 +109,12 @@ Additionally, the `.env.EXAMPLE` file has the `AIRTABLE_BASE_ID` pre-defined for
 
 If you ever lose the base ID for the dummy database, it is `appkenjGlBB01wr3i`.
 
+### Algolia
+
+We are using Algolia for our searching backend, please ask for API keys as currently we only have database setup and I don't wanna put the keys in here.
+
+All the Algolia keys need to be set in .env.development as Gatsby uses this method to seperate out environment variables that are loaded on the frontend from the rest.
+
 ## Cloudinary
 
 CLOUD_NAME=rebuild-black-business

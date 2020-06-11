@@ -1,13 +1,16 @@
 import React from 'react';
 
-import { graphql } from 'gatsby';
 import { Flex } from '@chakra-ui/core';
-import { PageHero, Layout, BusinessFeed, Pagination } from '../components';
+import { PageHero, BusinessFeed } from '../components';
 import CardSkeleton from '../components/Loading/CardSkeleton';
+import Pagination from '../components/Pagination';
 
-export default function Businesses(data) {
-  // AirTable passes us and extra data...
-  const businessFeedData = data.data.allAirtableBusinesses.nodes;
+import useAlgoliaSearch from '../hooks/useAlgoliaSearch';
+import usePagination from '../hooks/usePagination';
+
+export default function Businesses(props) {
+  const { results, totalPages, setSearchPage } = useAlgoliaSearch();
+  const page = usePagination(props.location, page => setSearchPage(page));
 
   const pageSubtitle = (
     <p>
@@ -18,10 +21,10 @@ export default function Businesses(data) {
   );
 
   const heroBackgroundImageUrl =
-    'http://res.cloudinary.com/rebuild-black-business/image/upload/f_auto/v1/assets/business-header';
+    '//res.cloudinary.com/rebuild-black-business/image/upload/c_scale,f_auto,h_0.6,q_auto/v1/assets/business-header';
 
   return (
-    <Layout>
+    <>
       <Flex align="center" justify="center" direction="column">
         <PageHero
           title="Businesses"
@@ -29,36 +32,17 @@ export default function Businesses(data) {
           heroImageUrl={heroBackgroundImageUrl}
           hasFadedHeroImage
         />
-        <CardSkeleton data={businessFeedData}>
-          <BusinessFeed {...data} />
+
+        <CardSkeleton data={results}>
+          <BusinessFeed businesses={results} />
         </CardSkeleton>
 
         <Pagination
-          totalRecords={data.pageContext.totalRecords}
-          pageLimit={data.pageContext.itemsPerPage}
+          location={props.location}
+          currentPage={parseInt(page)}
+          totalPages={parseInt(totalPages) - 1}
         />
       </Flex>
-    </Layout>
+    </>
   );
 }
-
-export const query = graphql`
-  query($itemsPerPage: Int!, $skip: Int!) {
-    allAirtableBusinesses(limit: $itemsPerPage, skip: $skip) {
-      nodes {
-        data {
-          Email
-          Name
-          Business_Name
-          Category
-          Zip_Code
-          Business_Description
-          Website
-          Donation_Link
-          In_Need
-          CreatedAt
-        }
-      }
-    }
-  }
-`;

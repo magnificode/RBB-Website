@@ -1,33 +1,31 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { Button, Flex, PseudoBox, useTheme } from '@chakra-ui/core';
-import PaginationArrow from '../Svgs/PaginationArrow';
-import { range } from '../../utils/common';
 import PropTypes from 'prop-types';
 import useMedia from 'react-use/lib/useMedia';
+import { Link } from 'gatsby';
+import { range } from '../../utils/common';
+import PaginationArrow from '../Svgs/PaginationArrow';
 
 const PLACEHOLDER = '...';
+
+function getUpdatedSearchParams(searchString, { page }) {
+  const searchParams = new URLSearchParams(searchString);
+  searchParams.set('page', page);
+  return searchParams.toString();
+}
 
 /**
  * @function Pagination
  *
- * @param {Object} props - Props object that is passed into Pagination
- * @param {number} props.currentPage - current page number that is being viewed
+ * @param {number} currentPage - current page number that is being viewed
  * @param {number} totalRecords - Total records count
  * @param {number} [pageLimit=10] - Number of items to display per page
- * @param {function} onPageChanged - Callback function that passes paginated information
  */
-function Pagination({ onPageChanged, totalRecords, pageLimit, ...props }) {
+function Pagination({ location, currentPage, totalPages }) {
   const theme = useTheme();
 
   const isWide = useMedia('(min-width: 480px)');
   const pageNeighbors = isWide ? 2 : 1;
-
-  const totalPages = useMemo(() => Math.ceil(totalRecords / pageLimit), [
-    totalRecords,
-    pageLimit,
-  ]);
-
-  const [currentPage, setCurrentPage] = useState(1);
 
   /**
    * Let's say we have 10 pages and we set pageNeighbours to 2
@@ -82,20 +80,21 @@ function Pagination({ onPageChanged, totalRecords, pageLimit, ...props }) {
     return range(1, totalPages);
   }, [currentPage, totalPages, pageNeighbors]);
 
-  function handleGoToPage(page) {
-    setCurrentPage(Math.max(0, Math.min(page, totalPages)));
+  // check to make sure pagination doesn't crash out pages that accidentally include it
+  if (!location) return null;
+  const pathname = location.pathname;
 
-    if (onPageChanged)
-      onPageChanged({
-        currentPage,
-        totalPages,
-        pageLimit,
-        totalRecords,
-      });
+  /**
+   * Create the correct page link
+   * @param {integer} page - new page number
+   */
+  function getPageLink(page) {
+    if (page === 1) return pathname;
+    return `${pathname}?${getUpdatedSearchParams(location.search, { page })}`;
   }
 
-  const handleMovePrevious = () => handleGoToPage(currentPage - 1);
-  const handleMoveNext = () => handleGoToPage(currentPage + 1);
+  const prevPageLink = getPageLink(currentPage - 1);
+  const nextPageLink = getPageLink(currentPage + 1);
 
   return (
     <Flex
@@ -108,7 +107,7 @@ function Pagination({ onPageChanged, totalRecords, pageLimit, ...props }) {
       <PaginationArrow
         hidden={currentPage === 1}
         direction="PREVIOUS"
-        onClick={handleMovePrevious}
+        linkTo={prevPageLink}
       />
       {pages.map((page, index) => {
         if (page === PLACEHOLDER) {
@@ -132,49 +131,49 @@ function Pagination({ onPageChanged, totalRecords, pageLimit, ...props }) {
         }
 
         const isActivePage = currentPage === page;
-        function handleClick() {
-          handleGoToPage(page);
-        }
 
         return (
-          <Button
-            key={index}
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            width={10}
-            height={10}
-            backgroundColor={isActivePage && theme.colors['rbb-orange']}
-            fontFamily={theme.fonts['heading-slab']}
-            fontSize={theme.fontSizes.lg}
-            fontWeight={theme.fontWeights.bold}
-            cursor="pointer"
-            _hover={{ bg: !isActivePage && theme.colors['rbb-lightgray'] }}
-            onClick={handleClick}
-            title={`Go to page ${page}`}
-            aria-label={`Go to page ${page}`}
-          >
-            {page}
-          </Button>
+          <Link to={getPageLink(page)}>
+            <Button
+              key={index}
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              width={10}
+              height={10}
+              backgroundColor={isActivePage && theme.colors['rbb-orange']}
+              fontFamily={theme.fonts['heading-slab']}
+              fontSize={theme.fontSizes.lg}
+              fontWeight={theme.fontWeights.bold}
+              cursor="pointer"
+              _focus={{ bg: !isActivePage && theme.colors['rbb-lightgray'] }}
+              _hover={{ bg: !isActivePage && theme.colors['rbb-lightgray'] }}
+              title={`Go to page ${page}`}
+              aria-label={`Go to page ${page}`}
+            >
+              {page}
+            </Button>
+          </Link>
         );
       })}
       <PaginationArrow
         hidden={currentPage === totalPages}
         direction="NEXT"
-        onClick={handleMoveNext}
+        linkTo={nextPageLink}
       />
     </Flex>
   );
 }
 
 Pagination.defaultProps = {
-  pageLimit: 10,
+  totalPages: 1,
+  currentPage: 1,
 };
 
 Pagination.propTypes = {
-  totalRecords: PropTypes.number.isRequired,
-  pageLimit: PropTypes.number,
-  onPageChanged: PropTypes.func,
+  location: PropTypes.object.isRequired,
+  currentPage: PropTypes.number.isRequired,
+  totalPages: PropTypes.number.isRequired,
 };
 
 export default Pagination;

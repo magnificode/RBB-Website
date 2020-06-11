@@ -1,38 +1,14 @@
-const path = require('path');
-
-exports.createPages = async ({ graphql, actions }) => {
+// Implement the Gatsby API “onCreatePage”. This is
+// called after every page is created.
+exports.onCreatePage = async ({ page, actions }) => {
   const { createPage } = actions;
-  const businesses = path.resolve(`src/templates/businesses.js`);
 
-  const result = await graphql(
-    `
-      {
-        allAirtableBusinesses {
-          edges {
-            node {
-              id
-            }
-          }
-        }
-      }
-    `
-  );
-
-  const itemsPerPage = 20;
-  const totalRecords = result.data.allAirtableBusinesses.edges.length;
-  const numberOfBusinessPages = Math.ceil(totalRecords / itemsPerPage);
-
-  for (let pageNumber = 1; pageNumber <= numberOfBusinessPages; pageNumber++) {
-    createPage({
-      path: `businesses/${pageNumber === 1 ? '' : `${pageNumber}/`}`, // required, we don't have frontmatter for this page hence separate if()
-      component: businesses,
-      context: {
-        page: pageNumber,
-        itemsPerPage,
-        totalRecords,
-        skip: itemsPerPage * (pageNumber - 1),
-      },
-    });
+  // Only update the `/app` page.
+  if (page.path.match(/^\/businesses/)) {
+    // page.matchPath is a special key that's used for matching pages
+    // with corresponding routes only on the client.
+    page.matchPath = '/businesses/*';
+    // Update the page.
+    createPage(page);
   }
-  return;
 };

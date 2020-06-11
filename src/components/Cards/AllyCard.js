@@ -1,39 +1,57 @@
-import React, { forwardRef, useRef } from 'react';
-import PropTypes from 'prop-types';
 import {
-  CardWrapper,
-  CardContent,
-  CardHeading,
-  CardText,
-  CardButton,
-  CardButtonGroup,
-} from '../Card';
-import {
-  Text,
   Box,
   Icon,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
-  useTheme,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Text,
   useDisclosure,
+  useTheme,
 } from '@chakra-ui/core';
+import { graphql, StaticQuery } from 'gatsby';
+import PropTypes from 'prop-types';
+import React, { forwardRef, useRef } from 'react';
 import { zipcodeConversion } from '../../utils/locationUtils';
-import Link from '../Link';
 import Button from '../Button';
+import {
+  CardButton,
+  CardButtonGroup,
+  CardContent,
+  CardHeading,
+  CardText,
+  CardWrapper,
+} from '../Card';
+import ErrorBoundary from '../ErrorBoundary';
+import Link from '../Link';
 
 // @TODO :: Add proper content to this modal. Probably pull this out into its own file seeing as its going to be a form
 const ModalForm = ({ isOpen, onClose, title }) => (
   <Modal isOpen={isOpen} onClose={onClose}>
     <ModalOverlay />
     <ModalContent>
-      <ModalHeader>{title}</ModalHeader>
+      <ModalHeader maxWidth="97%">{title}</ModalHeader>
       <ModalCloseButton />
-      <ModalBody>Message for reporting or updating here</ModalBody>
+      <ErrorBoundary>
+        <StaticQuery
+          query={ContactQuery}
+          render={data => (
+            <ModalBody>
+              Please send an email to{' '}
+              <Link
+                variant="standard"
+                href={`mailto:${data.site.siteMetadata.social.contact}`}
+              >
+                {data.site.siteMetadata.social.contact}
+              </Link>{' '}
+              to report or remove this listing.
+            </ModalBody>
+          )}
+        />
+      </ErrorBoundary>
       <ModalFooter>
         <Button variantColor="blue" m={3} onClick={onClose}>
           Close
@@ -42,6 +60,18 @@ const ModalForm = ({ isOpen, onClose, title }) => (
     </ModalContent>
   </Modal>
 );
+
+const ContactQuery = graphql`
+  query ReportRemoveContactQuery {
+    site {
+      siteMetadata {
+        social {
+          contact
+        }
+      }
+    }
+  }
+`;
 
 /**
  * @component
@@ -56,11 +86,12 @@ const ModalForm = ({ isOpen, onClose, title }) => (
  * )
  */
 const AllyCard = forwardRef(
-  ({ name, email, specialty, location, ...props }, ref) => {
+  ({ first, last, email, specialty, location, ...props }, ref) => {
     const { onOpen, isOpen, onClose } = useDisclosure();
     const { reportRef, updateRef } = useRef();
     const theme = useTheme();
 
+    const name = `${first} ${last}`;
     const zipInfo = zipcodeConversion(location);
     const formattedCity = zipInfo ? `${zipInfo.city}, ${zipInfo.state}` : null;
 
@@ -103,12 +134,12 @@ const AllyCard = forwardRef(
                 {specialty}
               </CardText>
             )}
-            <CardButtonGroup>
-              <CardButton as="a" href={`mailto:${email}`}>
-                Email
-              </CardButton>
-            </CardButtonGroup>
             <Box marginTop="auto" paddingTop={theme.spacing.base}>
+              <CardButtonGroup pb={3}>
+                <CardButton as="a" href={`mailto:${email}`}>
+                  Email
+                </CardButton>
+              </CardButtonGroup>
               <Text as="small" fontSize="sm" mt={3} isInline>
                 <Icon
                   name="flag"
@@ -130,7 +161,7 @@ const AllyCard = forwardRef(
                   onClick={onOpen}
                   ref={updateRef}
                 >
-                  update
+                  unlist
                 </Link>
               </Text>
             </Box>
@@ -150,7 +181,8 @@ const AllyCard = forwardRef(
 AllyCard.displayName = 'AllyCard';
 AllyCard.propTypes = {
   specialty: PropTypes.string,
-  name: PropTypes.string.isRequired,
+  first: PropTypes.string,
+  last: PropTypes.string,
   location: PropTypes.string,
   email: PropTypes.string.isRequired,
 };

@@ -27,6 +27,7 @@ const Content = ({
       direction={['column', 'column', 'column', 'row', 'row']}
       marginTop={marginTop}
       marginBottom={marginBottom}
+      width="100%"
     >
       <Heading
         as="h2"

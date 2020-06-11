@@ -2,27 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { useLocalStorage } from 'react-use';
 
 import {
-  Flex,
-  useDisclosure,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalBody,
   Button,
-  ModalFooter,
+  Flex,
   Link,
-  Icon,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  useDisclosure,
 } from '@chakra-ui/core';
 
-import {
-  AllyFeed,
-  AllyFilter,
-  PageHero,
-  Layout,
-  Pagination,
-} from '../components';
+import { AllyFeed, AllyFilter, PageHero, Image, Layout } from '../components';
 
-export default function Allies() {
+export default function Allies(props) {
   const [allyFilters, setAllyFilters] = useState({
     skill: '',
     location: '',
@@ -32,15 +26,14 @@ export default function Allies() {
 
   const pageSubtitle = (
     <p>
-      These Allies have skills to share in assisting black-owned businesses to
-      return to business, and stay afloat while operating. Reach out to those on
-      this page if you know of a way to join the fight in helping businesses
-      survive and thrive.
+      These Allies are offering their skills to help Black-Owned businesses.
+      Whether you need to rebuild or stay afloat, an Ally can help. Search for
+      Allies by skill or location and contact them directly.
     </p>
   );
 
   const heroBackgroundImageUrl =
-    'http://res.cloudinary.com/rebuild-black-business/image/upload/f_auto/v1/assets/ally-background';
+    '//res.cloudinary.com/rebuild-black-business/image/upload/c_scale,f_auto,h_0.6,q_auto/v1/assets/ally-background';
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -70,20 +63,23 @@ export default function Allies() {
             >
               <ModalOverlay />
               <ModalContent>
+                <ModalHeader padding={0} margin={0}>
+                  <Image
+                    alt="Person with a bandana over their mouth, holding one arm in the air"
+                    publicId="assets/ally-sign-up"
+                  />
+                </ModalHeader>
                 <ModalBody fontSize="lg" mt="8">
                   Please read and accept our{' '}
-                  <Link
-                    href="/terms-and-conditions"
-                    color="rbb-orange"
-                    isExternal
-                  >
-                    terms and conditions <Icon name="external-link" mx="2px" />
+                  <Link href="/legal#terms" color="rbb-orange" target="_blank">
+                    terms and conditions
                   </Link>{' '}
                   to access our Ally list and contacts.
                 </ModalBody>
 
                 <ModalFooter>
                   <Button
+                    margin="0 auto"
                     variantColor="orange"
                     rightIcon="check"
                     onClick={() => {
@@ -98,7 +94,6 @@ export default function Allies() {
             </Modal>
           </>
         )}
-        <Pagination totalRecords={70} pageLimit={5} />
       </Flex>
     </Layout>
   );

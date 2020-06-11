@@ -1,57 +1,68 @@
 import React, { forwardRef } from 'react';
 import PropTypes from 'prop-types';
+
+import { Box, Heading, Icon, Link, Text, useTheme } from '@chakra-ui/core';
+
 import {
   CardWrapper,
   CardImage,
   CardContent,
-  CardHeading,
   CardText,
   CardButtonGroup,
   CardButton,
 } from './Card';
-import { Link, Text, useTheme } from '@chakra-ui/core';
+
 import { zipcodeConversion } from '../utils/locationUtils';
+import { toCamelCase } from '../utils/stringUtils';
 
 // TODO: Replace with real fallback images for each category.
 // This should all probably be defined in the database somewhere, eh?
 const categoryData = {
+  other: {
+    label: 'Other',
+    image: {
+      src: 'assets/rbb-socialimage_g7rhcj',
+      alt: 'Other',
+    },
+    buttonText: 'Learn More',
+  },
   entertainment: {
     label: 'Entertainment',
     image: {
-      src: 'https://source.unsplash.com/random',
-      alt: 'Id facilisis dictum consequat sit orci.',
+      src: 'assets/business-entertainment-option',
+      alt: 'Entertainment business',
     },
     buttonText: 'Learn more',
   },
   foodAndBeverage: {
     label: 'Food and Beverage',
     image: {
-      src: 'https://source.unsplash.com/random',
-      alt: 'Id facilisis dictum consequat sit orci.',
+      src: 'assets/business-food-beverage',
+      alt: 'Food and beverage business',
     },
     buttonText: 'Order',
   },
   healthAndWellness: {
     label: 'Health and Wellness',
     image: {
-      src: 'https://source.unsplash.com/random',
-      alt: 'Id facilisis dictum consequat sit orci.',
+      src: 'assets/business-health',
+      alt: 'Health and wellness business',
     },
     buttonText: 'Learn more',
   },
   professionalServices: {
     label: 'Professional Services',
     image: {
-      src: 'https://source.unsplash.com/random',
-      alt: 'Id facilisis dictum consequat sit orci.',
+      src: 'assets/business-services',
+      alt: 'Professional servicess business',
     },
     buttonText: 'Contact',
   },
   retail: {
     label: 'Retail',
     image: {
-      src: 'https://source.unsplash.com/random',
-      alt: 'Id facilisis dictum consequat sit orci.',
+      src: 'assets/business-retail',
+      alt: 'Retail business',
     },
     buttonText: 'Shop',
   },
@@ -89,8 +100,9 @@ const ResultCard = forwardRef(
     },
     ref
   ) => {
+    const catVar = toCamelCase(category || 'other');
     const hasFallbackImage =
-      category && Object.keys(categoryData).includes(category);
+      category && Object.keys(categoryData).includes(catVar);
     const hasImage = !!(imageSrc || hasFallbackImage);
     const theme = useTheme();
 
@@ -98,7 +110,7 @@ const ResultCard = forwardRef(
     // change. Also unsure how we're going to handle the schema category on the
     // card wrapee
     const categoryLabel =
-      (categoryData[category] && categoryData[category].label) || category;
+      (categoryData[catVar] && categoryData[catVar].label) || category;
     const zipInfo = zipcodeConversion(location);
     const formattedCity = zipInfo ? `${zipInfo.city}, ${zipInfo.state}` : null;
 
@@ -106,8 +118,6 @@ const ResultCard = forwardRef(
       <CardWrapper
         ref={ref}
         {...props}
-        // TODO: Use real theme colors per the design
-        border={`1px solid ${theme.colors['rbb-gray']}`}
         itemScope
         // TODO: the category in Airtable isn't going to match the schema
         // category, will need to be fixed. Omitting for now.
@@ -115,35 +125,62 @@ const ResultCard = forwardRef(
       >
         {hasImage && (
           <CardImage
-            src={imageSrc || categoryData[category].image.src}
-            alt={imageSrc ? imageAlt : categoryData[category].image.alt}
+            publicId={!imageSrc ? categoryData[catVar]?.image.src : null}
+            src={imageSrc ? imageSrc : null}
+            alt={imageAlt || categoryData[catVar]?.image.alt}
           />
         )}
         <CardContent
-          bg={
-            hasImage
-              ? theme.colors['rbb-white']
-              : theme.colors['rbb-result-card-grey']
-          }
-          color={hasImage ? undefined : 'white'}
+          bg={theme.colors['rbb-result-card-grey']}
+          color={hasImage ? undefined : theme.colors['rbb-black-200']}
         >
-          <CardHeading itemprop="name">{name}</CardHeading>
-          {category && <CardText as="span">{categoryLabel}</CardText>}
+          <Heading as="h2" itemprop="name" size="md" fontWeight="normal">
+            {name}
+          </Heading>
+          {category && (
+            <CardText as="span" margin="1rem 0">
+              {categoryLabel}
+            </CardText>
+          )}
           {description && <CardText as="p">{description}</CardText>}
           {formattedCity && <CardText as="p">{formattedCity}</CardText>}
-          <CardButtonGroup>
-            <CardButton as="a" href={websiteUrl}>
+          <CardButtonGroup mt={theme.spacing.base} mb={theme.spacing.base}>
+            <CardButton
+              as="a"
+              href={websiteUrl}
+              style={{
+                /* @TODO: primary buttons should be white! */
+                color: theme.colors['rbb-white'],
+              }}
+            >
               {(category && categoryData[category]?.buttonText) || 'Learn More'}
             </CardButton>
             {donationUrl && (
-              <CardButton href={donationUrl} as="a">
+              <CardButton
+                color={theme.colors['rbb-white']}
+                href={donationUrl}
+                as="a"
+              >
                 Donate
               </CardButton>
             )}
           </CardButtonGroup>
-          <Text as="small" fontSize="sm" mt={3}>
-            <Link href="#">Report or update</Link>
-          </Text>
+          <Box>
+            <Text as="small" fontSize="sm" isInline>
+              <Icon
+                name="flag"
+                color={theme.colors['rbb-gray']}
+                mr={theme.spacing.xs}
+              />
+              <Link color={theme.colors['rbb-orange']} href="#">
+                Report
+              </Link>
+              <span> or </span>
+              <Link color={theme.colors['rbb-orange']} href="#">
+                update
+              </Link>
+            </Text>
+          </Box>
         </CardContent>
       </CardWrapper>
     );

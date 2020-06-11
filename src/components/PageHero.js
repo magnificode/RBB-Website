@@ -15,11 +15,13 @@ const PageHero = ({ title, subtitle, heroImageUrl, hasFadedHeroImage }) => {
           position="absolute"
           zIndex={-9}
           top={0}
+          left={0}
           width="100%"
           height="100vh"
           backgroundSize="cover"
           backgroundRepeat="no-repeat"
-          background={`${
+          backgroundPosition="top center"
+          backgroundImage={`${
             hasFadedHeroImage ? gradientFade : ''
           } url(${heroImageUrl})`}
         />

@@ -5,7 +5,11 @@ const NoResultsCard = ({ type }) => {
   const theme = useTheme();
 
   return (
-    <Box bg="rbb-light-gray" padding={[theme.spacing.base, theme.spacing.lg]}>
+    <Box
+      bg="rbb-light-gray"
+      padding={[theme.spacing.base, theme.spacing.lg]}
+      marginBottom={[theme.spacing.base, theme.spacing.lg]}
+    >
       <Heading
         data-testid="heading"
         fontFamily={theme.fonts['heading-slab']}
@@ -16,13 +20,20 @@ const NoResultsCard = ({ type }) => {
       >
         Sorry, No {type} Matched This Search.
       </Heading>
-      <Text data-testid="subheading" my={theme.spacing.base} textAlign="center">
-        {/* TODO: this copy needs to be dynamically generated based on filters */}
-        We don’t have any {type} that match your search.
-      </Text>
+      {type === 'allies' && (
+        <Text
+          data-testid="subheading"
+          my={theme.spacing.base}
+          textAlign="center"
+        >
+          {/* TODO: the "your area" copy needs to be dynamically generated based on filters */}
+          We’d love to have Allies in your area. If you’ve got skills to assist
+          Black-owned businesses, sign up to be added.
+        </Text>
+      )}
 
       {/*
-        TODO: probably need a form embed ID/component/prop if the 
+        TODO: probably need a form embed ID/component/prop if the
         forms are different between business and allies
       */}
       <pre>TODO: embed Airtable form here</pre>

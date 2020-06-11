@@ -1,4 +1,7 @@
 {
-  "baseUrl": "http://localhost:8000/",
-  "ignoreTestFiles": ["**/*.skip.*", "/**/*.skip/*"]
+  "baseUrl": "http://localhost:8000",
+  "ignoreTestFiles": [
+    "**/*.skip.*",
+    "/**/*.skip/*"
+  ]
 }

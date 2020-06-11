@@ -14,12 +14,18 @@ const FooterLinks = () => {
           return (
             <NavMenu
               as={Flex}
-              w={['90%', '90%', '90%', '65%']}
+              w={['90%', '90%', '90%', 'full']}
               justify="space-evenly"
               wrap={['wrap', 'wrap', 'wrap', null]}
               align="center"
             >
-              {data.site.siteMetadata.menuLinks.map(link => (
+              {[
+                ...data.site.siteMetadata.menuLinks,
+                {
+                  name: 'Legal',
+                  slug: '/legal',
+                },
+              ].map(link => (
                 <NavItem
                   key={link.name}
                   mr="2"
